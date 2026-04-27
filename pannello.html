@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pannello QR Comune di Cagliari</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  background:#eef3f8;
+  font-family:Arial,sans-serif;
+}
+
+.panel{
+  width:420px;
+  max-width:92vw;
+  background:#fff;
+  border:8px solid #123a63;
+  border-radius:24px;
+  padding:28px;
+  text-align:center;
+  box-shadow:0 20px 50px rgba(0,0,0,.20);
+}
+
+.logo{
+  width:90px;
+  height:90px;
+  margin:0 auto 14px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#123a63,#1e73be);
+  color:#fff;
+  font-weight:bold;
+  font-size:14px;
+  line-height:1.2;
+}
+
+.top{
+  font-size:14px;
+  color:#123a63;
+  letter-spacing:1px;
+}
+
+.street{
+  font-size:34px;
+  font-weight:800;
+  color:#111;
+  margin:12px 0;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:12px;
+  font-size:16px;
+  margin:10px 0;
+}
+
+.btn{
+  width:100%;
+  border:none;
+  background:#123a63;
+  color:#fff;
+  padding:12px;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:8px;
+}
+
+.qrbox{
+  margin-top:16px;
+  padding:18px;
+  background:#f8fafc;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+}
+
+.note{
+  margin-top:12px;
+  font-size:14px;
+  color:#555;
+}
+</style>
+</head>
+<body>
+
+<div class="panel">
+
+  <div class="logo">
+    COMUNE<br>CAGLIARI
+  </div>
+
+  <div class="top">TOPONOMASTICA AUMENTATA</div>
+
+  <div class="street" id="streetLabel">VIALE TRIESTE</div>
+
+  <input
+    id="streetInput"
+    type="text"
+    value="Viale Trieste"
+    placeholder="Inserisci nome via"
+  >
+
+  <button class="btn" onclick="generateQR()">
+    Genera QR
+  </button>
+
+  <div class="qrbox">
+    <div id="qrcode"></div>
+  </div>
+
+  <div class="note">
+    Scansiona il QR per aprire la web app.
+  </div>
+
+</div>
+
+<script>
+function generateQR(){
+
+  const street =
+    document.getElementById("streetInput").value.trim() ||
+    "Via della Città";
+
+  document.getElementById("streetLabel").innerText =
+    street.toUpperCase();
+
+  const repoBase =
+    window.location.origin +
+    window.location.pathname.replace("pannello.html","");
+
+  const url =
+    repoBase +
+    "index.html?street=" +
+    encodeURIComponent(street);
+
+  const qr = document.getElementById("qrcode");
+  qr.innerHTML = "";
+
+  new QRCode(qr,{
+    text:url,
+    width:220,
+    height:220
+  });
+}
+
+generateQR();
+</script>
+
+</body>
+</html>
