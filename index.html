@@ -15,10 +15,12 @@ html,body{
   font-family:Arial,sans-serif;
   background:#0b1220;
 }
+
 #map{
   width:100%;
   height:100%;
 }
+
 .panel{
   position:absolute;
   top:20px;
@@ -31,6 +33,7 @@ html,body{
   border-radius:18px;
   box-shadow:0 15px 35px rgba(0,0,0,.25);
 }
+
 .badge{
   display:inline-block;
   padding:6px 10px;
@@ -40,16 +43,19 @@ html,body{
   font-size:12px;
   margin-bottom:8px;
 }
+
 h1{
   margin:0 0 10px;
   font-size:24px;
   color:#111;
 }
+
 .small{
   font-size:14px;
   color:#444;
   line-height:1.45;
 }
+
 .btn{
   width:100%;
   margin-top:12px;
@@ -65,14 +71,19 @@ h1{
 </head>
 <body>
 
-<div class="panel">
+<div class="panel" id="welcomePanel">
   <div class="badge">Toponomastica Aumentata</div>
   <h1 id="streetTitle">Via della Città</h1>
+
   <div class="small">
     Hai scansionato il QR della via.<br><br>
     Autorizzami il rilievo della tua posizione per mostrarti la mappa e i punti di interesse vicini.
   </div>
-  <button class="btn" onclick="startApp()">Autorizza posizione</button>
+
+  <button class="btn" onclick="startApp()">
+    Autorizza posizione
+  </button>
+
   <div id="status" class="small" style="margin-top:10px;"></div>
 </div>
 
@@ -91,8 +102,11 @@ function setStatus(msg){
 }
 
 function startApp(){
+
+  // nasconde il pannello iniziale
+  document.getElementById("welcomePanel").style.display = "none";
+
   if(!navigator.geolocation){
-    setStatus("Geolocalizzazione non disponibile.");
     initMap();
     loadPOI();
     return;
@@ -100,12 +114,14 @@ function startApp(){
 
   navigator.geolocation.getCurrentPosition(
     function(pos){
-      userPos = [pos.coords.latitude, pos.coords.longitude];
+      userPos = [
+        pos.coords.latitude,
+        pos.coords.longitude
+      ];
       initMap();
       loadPOI();
     },
     function(){
-      setStatus("Permesso negato. Uso posizione demo.");
       initMap();
       loadPOI();
     }
@@ -113,6 +129,7 @@ function startApp(){
 }
 
 function initMap(){
+
   map = L.map("map").setView(userPos, 16);
 
   L.tileLayer(
@@ -124,12 +141,12 @@ function initMap(){
     .addTo(map)
     .bindPopup("<b>Tu sei qui</b>")
     .openPopup();
-
-  setStatus("Mappa caricata.");
 }
 
 async function loadPOI(){
+
   try{
+
     const url =
       "https://it.wikipedia.org/w/api.php?action=query&list=geosearch" +
       "&gscoord=" + userPos[0] + "|" + userPos[1] +
@@ -139,18 +156,21 @@ async function loadPOI(){
     const data = await res.json();
 
     data.query.geosearch.forEach(poi => {
+
       const poiPos = [poi.lat, poi.lon];
 
-      const distance = Math.round(
-        map.distance(userPos, poiPos)
-      );
+      const distance =
+        Math.round(map.distance(userPos, poiPos));
 
-      const walk = Math.max(1, Math.round(distance / 80));
+      const walk =
+        Math.max(1, Math.round(distance / 80));
 
       const lines = ["1","5","6","7","8","M","PF","QS"];
       const l1 = lines[Math.floor(Math.random()*lines.length)];
       const l2 = lines[Math.floor(Math.random()*lines.length)];
-      const ctm = l1 === l2 ? l1 : l1 + ", " + l2;
+
+      const ctm =
+        l1 === l2 ? l1 : l1 + ", " + l2;
 
       L.marker(poiPos)
         .addTo(map)
@@ -158,13 +178,15 @@ async function loadPOI(){
           "<b>" + poi.title + "</b><br>" +
           "🚌 CTM: " + ctm + "<br>" +
           "🚶 " + walk + " min a piedi<br><br>" +
-          "<button onclick=\"openWiki('" + encodeURIComponent(poi.title) + "')\">Apri Wikipedia</button>"
+          "<button onclick=\"openWiki('" +
+          encodeURIComponent(poi.title) +
+          "')\">Apri Wikipedia</button>"
         );
+
     });
 
-    setStatus("Punti di interesse caricati.");
   }catch(e){
-    setStatus("Errore caricamento punti di interesse.");
+    console.log(e);
   }
 }
 
