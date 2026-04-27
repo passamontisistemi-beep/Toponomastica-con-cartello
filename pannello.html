@@ -20,7 +20,7 @@ body{
 .panel{
   width:420px;
   max-width:92vw;
-  background:#fff;
+  background:#ffffff;
   border:8px solid #123a63;
   border-radius:24px;
   padding:28px;
@@ -92,6 +92,7 @@ input{
 }
 </style>
 </head>
+
 <body>
 
 <div class="panel">
@@ -135,14 +136,11 @@ function generateQR(){
   document.getElementById("streetLabel").innerText =
     street.toUpperCase();
 
-  const repoBase =
-    window.location.origin +
-    window.location.pathname.replace("pannello.html","");
+  const baseUrl =
+    "https://passamontisistemi-beep.github.io/Toponomastica-con-cartello/index.html";
 
   const url =
-    repoBase +
-    "index.html?street=" +
-    encodeURIComponent(street);
+    baseUrl + "?street=" + encodeURIComponent(street);
 
   const qr = document.getElementById("qrcode");
   qr.innerHTML = "";
